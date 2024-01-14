@@ -7,11 +7,15 @@ def process_street(call, bot, admin, db, street_name):
     elif street_name == "lomonosovsky":
         street_str = "на Ломоносовском"
     else:
-        street_str = "на Кржижановского"
+        street_str = "на Крижановского"
 
-    positions = db.execute(
+    positions = [el for el in db.execute(
         "SELECT * FROM dop_ed WHERE korp = ?", [street_str]
-    ).fetchall()
+    ).fetchall() if el[0] < 10000 or admin]
+
+    # positions = db.execute(
+    #     "SELECT * FROM dop_ed WHERE korp = ?", [street_str]
+    # ).fetchall()
 
     bttns = types.InlineKeyboardMarkup()
     if admin:
@@ -32,21 +36,20 @@ def process_street(call, bot, admin, db, street_name):
         )
     else:
         for el in positions:
-            if el[0] < 10000 or admin:
-                if len(str(el[2]).split()) > 1:
-                    bttns.add(
-                        types.InlineKeyboardButton(
-                            f'{el[1]} для {", ".join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов',
-                            callback_data=f"{el[0]} look_at_position",
-                        )
+            if len(str(el[2]).split()) > 1:
+                bttns.add(
+                    types.InlineKeyboardButton(
+                        f'{el[1]} для {", ".join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов',
+                        callback_data=f"{el[0]} position_details",
                     )
-                else:
-                    bttns.add(
-                        types.InlineKeyboardButton(
-                            f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                            callback_data=f"{el[0]} look_at_position",
-                        )
+                )
+            else:
+                bttns.add(
+                    types.InlineKeyboardButton(
+                        f"{el[1]} для {str(el[2]).split()[-1]} классов",
+                        callback_data=f"{el[0]} position_details",
                     )
+                )
         bot.send_message(
             call.message.chat.id, f"Кружки {street_str}:", reply_markup=bttns
         )

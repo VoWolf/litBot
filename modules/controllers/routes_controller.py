@@ -289,7 +289,7 @@ def all_positions_handler(call, bot, admin, db):
             if admin:
                 bttns.row(
                     types.InlineKeyboardButton(
-                        "Создать запись", callback_data="Create_data, на Ломоносовском"
+                        "Создать запись", callback_data="add, на Ломоносовском"
                     )
                 )
                 if "remember" in call.data:
@@ -326,14 +326,14 @@ def all_positions_handler(call, bot, admin, db):
                         bttns.add(
                             types.InlineKeyboardButton(
                                 f"{el[1]} для {', '.join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} look_at_position",
+                                callback_data=f"{el[0]} position_details",
                             )
                         )
                     else:
                         bttns.add(
                             types.InlineKeyboardButton(
                                 f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} look_at_position",
+                                callback_data=f"{el[0]} position_details",
                             )
                         )
             if admin:
@@ -380,7 +380,7 @@ def all_positions_handler(call, bot, admin, db):
             if admin:
                 bttns.row(
                     types.InlineKeyboardButton(
-                        "Создать запись", callback_data="Create_data, на Профсоюзной"
+                        "Создать запись", callback_data="add, на Профсоюзной"
                     )
                 )
                 bot.edit_message_text(
@@ -403,14 +403,14 @@ def all_positions_handler(call, bot, admin, db):
                         bttns.add(
                             types.InlineKeyboardButton(
                                 f'{el[1]} для {", ".join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов',
-                                callback_data=f"{el[0]} look_at_position",
+                                callback_data=f"{el[0]} position_details",
                             )
                         )
                     else:
                         bttns.add(
                             types.InlineKeyboardButton(
                                 f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} look_at_position",
+                                callback_data=f"{el[0]} position_details",
                             )
                         )
             if admin:
@@ -440,7 +440,7 @@ def all_positions_handler(call, bot, admin, db):
             if admin:
                 bttns.row(
                     types.InlineKeyboardButton(
-                        "Создать запись", callback_data="Create_data, на Крижановского"
+                        "Создать запись", callback_data="add, на Крижановского"
                     )
                 )
                 bot.edit_message_text(
@@ -463,14 +463,14 @@ def all_positions_handler(call, bot, admin, db):
                         bttns.add(
                             types.InlineKeyboardButton(
                                 f'{el[1]} для {", ".join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов',
-                                callback_data=f"{el[0]} look_at_position",
+                                callback_data=f"{el[0]} position_details",
                             )
                         )
                     else:
                         bttns.add(
                             types.InlineKeyboardButton(
                                 f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} look_at_position",
+                                callback_data=f"{el[0]} position_details",
                             )
                         )
             if admin:
@@ -511,7 +511,7 @@ def edit_handler(call, bot, db, connection):
         "К списку Кружков", callback_data="all_positions, page_1, remember"
     )
     btn3 = types.InlineKeyboardButton(
-        "К кружку", callback_data=f"{time_help[2]} look_at_position"
+        "К кружку", callback_data=f"{time_help[2]} position_details"
     )
     bttns.add(btn1, btn2, btn3)
 
@@ -843,7 +843,7 @@ def edit_handler(call, bot, db, connection):
                 "Не подтверждать действия",
                 callback_data=f"edit, remove, {time_help[2]}, no",
             )
-            db.add(btn1, btn2)
+            cc.add(btn1, btn2)
             bot.send_message(
                 call.message.chat.id,
                 f'Вы уверены что хотите удалить запись о {"".join([str(el[0]) for el in db.execute("SELECT name FROM dop_ed WHERE id = ?", (time_help[2],)).fetchall()])}? <b>ОНА БУДЕТ БЕЗВОЗВРАТНО УТЕРЯНА</b>',
@@ -910,7 +910,7 @@ def edit_handler(call, bot, db, connection):
             )
             btn3 = types.InlineKeyboardButton(
                 "К кружку",
-                callback_data=f"{int(time_help[2]) - 10000} look_at_position",
+                callback_data=f"{int(time_help[2]) - 10000} position_details",
             )
             bttns.add(btn1, btn2, btn3)
             db.execute(
@@ -930,7 +930,7 @@ def edit_handler(call, bot, db, connection):
             )
             btn3 = types.InlineKeyboardButton(
                 "К кружку",
-                callback_data=f"{int(time_help[2]) + 10000} look_at_position",
+                callback_data=f"{int(time_help[2]) + 10000} position_details",
             )
             bttns.add(btn1, btn2, btn3)
             db.execute(
@@ -955,3 +955,20 @@ def add_handler(call, bot):
 
 def logout_handler(call, bot):
     print("logout")
+
+
+def create_data_handler(call, bot, db, connection):
+    numbers = [int(el[0]) for el in db.execute("SELECT id FROM dop_ed").fetchall()]
+    for i in range(1, max(numbers) + 1):
+        if i not in numbers:
+            new_id = i
+            break
+    else:
+        new_id = max(numbers) + 1  # id, name, klasses, type, code, teacher, time, aud, plat, reg, sinse, korp
+    db.execute("""INSERT INTO dop_ed (id, name, klasses, type, code, teacher, time, aud, plat, reg,
+                    sinse, korp) VALUES (?, '❗Новая запись', '0', '*', '*', '*', '*:*-*:* *', '*', '-', '-', '-', ?)""",
+              [int(new_id) + 10000, call.data.split(", ")[1]])
+    btn = types.InlineKeyboardMarkup().add(
+        types.InlineKeyboardButton('К кружку', callback_data=f'{new_id + 10000} position_details')) # Change call.data!!!
+    bot.send_message(call.message.chat.id, 'Запись успешно создана!', reply_markup=btn)
+    connection.commit()
