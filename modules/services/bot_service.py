@@ -100,27 +100,29 @@ def callback_handler(call):
             routes_controller.how_to_register_handler(call, bot)
         case "dop_education":
             routes_controller.dop_education_handler(call, bot)
-        case "position_details":
-            routes_controller.position_details_handler(call, bot, admin, db)
         case "all_positions":
             routes_controller.all_positions_handler(call, bot, admin, db)
         case "profsoyuznaya":
             routes_controller.profsoyuznaya_handler(call, bot, admin, db)
         case "lomonosovsky":
-            routes_controller.profsoyuznaya_handler(call, bot, admin, db)
+            routes_controller.lomonosovsky_handler(call, bot, admin, db)
         case "krzhizhanovskogo":
-            routes_controller.profsoyuznaya_handler(call, bot, admin, db)
-        case "edit":
-            routes_controller.edit_handler(call, bot, db, conn)
+            routes_controller.krzhizhanovskogo_handler(call, bot, admin, db)
         case "change_password":
             # not implemented
             routes_controller.change_password_handler(call, bot)
-        case "add":
-            # not implemented
             routes_controller.add_handler(call, bot)
         case "logout":
             # not implemented
             routes_controller.logout_handler(call, bot)
+        case _ as par if "edit" in par:
+            routes_controller.edit_handler(call, bot, db, conn)
+        case _ as detail if "position_details" in detail:
+            routes_controller.position_details_handler(call, bot, admin, db)
+        case _ as korp if "add" in korp:
+            routes_controller.create_data_handler(call, bot, db, conn)
+        case _ as teststring if "all_positions" in teststring:
+            routes_controller.all_positions_handler(call, bot, admin, db)
         case _:
             routes_controller.restart_handler(call, bot)
 
