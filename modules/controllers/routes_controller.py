@@ -41,7 +41,7 @@ def contacts_handler(call, bot):
     item = types.InlineKeyboardButton(
         "Корпуса на карте",
         url="https://yandex.ru/maps/213/moscow/?ll=37.555258%2C55.691771&mode=usermaps&um=constructor"
-        "%3A1nzJdcg6iOPjfPFPXyh90u3R46dsk_8W&z=15",
+            "%3A1nzJdcg6iOPjfPFPXyh90u3R46dsk_8W&z=15",
     )
     item2 = types.InlineKeyboardButton(
         "Номера телефонов и официальный сайт", callback_data="phones"
@@ -275,230 +275,55 @@ def all_positions_handler(call, bot, admin, db):
     page_message_data = 0
 
     if "page_1" in call.data:
-        if "remember" in call.data:
-            page_message_data = call.message.id + 1
-        bttns = types.InlineKeyboardMarkup()
-        data: list = db.execute(
-            """SELECT id, name, klasses FROM dop_ed WHERE korp = 'на Ломоносовском'"""
-        ).fetchall()
-        btn1 = types.InlineKeyboardButton(
-            "На стр. 2", callback_data="all_positions, page_2"
-        )
-        bttns.row(btn1)
-        if data == []:
-            if admin:
-                bttns.row(
-                    types.InlineKeyboardButton(
-                        "Создать запись", callback_data="add, на Ломоносовском"
-                    )
-                )
-                if "remember" in call.data:
-                    bot.send_message(
-                        call.message.chat.id,
-                        "Стр 1/3: Ломносовский\nПредыдущая: функции\nСледующая: Профсоюзная\nКружков на Ломоносовском пока что не добавлено!",
-                        reply_markup=bttns,
-                    )
-                else:
-                    bot.edit_message_text(
-                        "Стр 1/3: Ломносовский\nПредыдущая: функции\nСледующая: Профсоюзная\nКружков на Ломоносовском пока что не добавлено!",
-                        call.message.chat.id,
-                        page_message_data,
-                        reply_markup=bttns,
-                    )
-            else:
-                if "remember" in call.data:
-                    bot.send_message(
-                        call.message.chat.id,
-                        "Стр 1/3: Ломносовский\nСледующая: Профсоюзная\nКружков на Ломоносовском пока что не добавлено, пожалуйста, обратитесь в администрациию для записи!",
-                        reply_markup=bttns,
-                    )
-                else:
-                    bot.edit_message_text(
-                        "Стр 1/3: Ломносовский\nСледующая: Профсоюзная\nКружков на Ломоносовском пока что не добавлено, пожалуйста, обратитесь в администрациию для записи!",
-                        call.message.chat.id,
-                        page_message_data,
-                        reply_markup=bttns,
-                    )
-        else:
-            for el in data:
-                if el[0] < 10000 or admin:
-                    if len(str(el[2]).split()) > 1:
-                        bttns.add(
-                            types.InlineKeyboardButton(
-                                f"{el[1]} для {', '.join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} position_details",
-                            )
-                        )
-                    else:
-                        bttns.add(
-                            types.InlineKeyboardButton(
-                                f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} position_details",
-                            )
-                        )
-            if admin:
-                if "remember" not in call.data:
-                    bot.edit_message_text(
-                        "Стр 1/3: Ломносовский\nСледующая: Профсоюзная\nСписок доступных к изменению кружков:",
-                        call.message.chat.id,
-                        page_message_data,
-                        reply_markup=bttns,
-                    )
-                else:
-                    bot.send_message(
-                        call.message.chat.id,
-                        "Стр 1/3: Ломносовский\nСледующая: Профсоюзная\nСписок доступных к изменению кружков:",
-                        reply_markup=bttns,
-                    )
-            else:
-                if "remember" not in call.data:
-                    bot.edit_message_text(
-                        "Стр 1/3: Ломносовский\nСледующая: Профсоюзная\nСписок доступных кружков:",
-                        call.message.chat.id,
-                        page_message_data,
-                        reply_markup=bttns,
-                    )
-                else:
-                    bot.send_message(
-                        call.message.chat.id,
-                        "Стр 1/3: Ломносовский\nСледующая: Профсоюзная\nСписок доступных кружков:",
-                        reply_markup=bttns,
-                    )
-    elif "page_2" in call.data:
-        bttns = types.InlineKeyboardMarkup()
-        data: list = db.execute(
-            """SELECT id, name, klasses FROM dop_ed WHERE korp = 'на Профсоюзной'"""
-        ).fetchall()
-        btn1 = types.InlineKeyboardButton(
-            "На стр. 1", callback_data="all_positions, page_1"
-        )
-        btn2 = types.InlineKeyboardButton(
-            "На стр. 3", callback_data="all_positions, page_3"
-        )
-        bttns.row(btn1, btn2)
-        if data == []:
-            if admin:
-                bttns.row(
-                    types.InlineKeyboardButton(
-                        "Создать запись", callback_data="add, на Профсоюзной"
-                    )
-                )
-                bot.edit_message_text(
-                    "Стр 2/3: Профсоюзная\nПредыдущая: Ломоносовский\nСледующая: Крижановского\nКружков на Профсоюзной пока что не добавлено!",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
-            else:
-                bot.edit_message_text(
-                    "Стр 2/3: Профсоюзная\nПредыдущая: Ломоносовский\nСледующая: Крижановского\nКружков на Профсоюзной пока что не добавлено, пожалуйста, обратитесь в администрациию для записи!",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
-        else:
-            for el in data:
-                if el[0] < 10000 or admin:
-                    if len(str(el[2]).split()) > 1:
-                        bttns.add(
-                            types.InlineKeyboardButton(
-                                f'{el[1]} для {", ".join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов',
-                                callback_data=f"{el[0]} position_details",
-                            )
-                        )
-                    else:
-                        bttns.add(
-                            types.InlineKeyboardButton(
-                                f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} position_details",
-                            )
-                        )
-            if admin:
-                bot.edit_message_text(
-                    "Стр 2/3: Профсоюзная\nПредыдущая: Ломоносовский\nСледующая: Крижановского\nСписок доступных к изменению кружков:",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
-            else:
-                bot.edit_message_text(
-                    "Стр 2/3: Профсоюзная\nПредыдущая: Ломоносовский\nСледующая: Крижановского\nСписок доступных кружков:",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
-    elif "page_3" in call.data:
-        bttns = types.InlineKeyboardMarkup()
-        data: list = db.execute(
-            """SELECT id, name, klasses FROM dop_ed WHERE korp = 'на Крижановского'"""
-        ).fetchall()
-        btn1 = types.InlineKeyboardButton(
-            "На стр. 2", callback_data="all_positions, page_2"
-        )
-        bttns.row(btn1)
-        if data == []:
-            if admin:
-                bttns.row(
-                    types.InlineKeyboardButton(
-                        "Создать запись", callback_data="add, на Крижановского"
-                    )
-                )
-                bot.edit_message_text(
-                    "Стр 3/3: Крижановского:\nПредыдущая: Профсоюзная\nКружков на Крижановского не добавлено!",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
-            else:
-                bot.edit_message_text(
-                    "Стр 3/3: Крижановского:\nПредыдущая: Профсоюзная\nКружков на Крижановского пока что не добавлено, пожалуйста, обратитесь в администрациию для записи!",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
-        else:
-            for el in data:
-                if el[0] < 10000 or admin:
-                    if len(str(el[2]).split()) > 1:
-                        bttns.add(
-                            types.InlineKeyboardButton(
-                                f'{el[1]} для {", ".join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов',
-                                callback_data=f"{el[0]} position_details",
-                            )
-                        )
-                    else:
-                        bttns.add(
-                            types.InlineKeyboardButton(
-                                f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                                callback_data=f"{el[0]} position_details",
-                            )
-                        )
-            if admin:
-                bot.edit_message_text(
-                    "Стр 3/3: Крижановского:\nПредыдущая: Профсоюзная\nСписок доступных к изменению кружков:",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
-            else:
-                bot.edit_message_text(
-                    "Стр 3/3: Крижановского:\nПредыдущая: Профсоюзная\nСписок доступных кружков:",
-                    call.message.chat.id,
-                    page_message_data,
-                    reply_markup=bttns,
-                )
+        pass
 
 
 def profsoyuznaya_handler(call, bot, admin, db):
-    process_street(call, bot, admin, db, "profsoyuznaya")
+    buttons = process_street(admin, db, "profsoyuznaya")
+    if buttons:
+        bot.send_message(call.message.chat.id, 'Кружки на Профсоюзной:', reply_markup=buttons)
+    else:
+        buttons_to_main_or_help = types.InlineKeyboardMarkup(row_width=2)
+        buttons_to_main_or_help.row(
+            types.InlineKeyboardButton('Главная', callback_data='restart'),
+            types.InlineKeyboardButton('Помощь', callback_data='help')
+        )
+        bot.send_message(
+            call.message.chat.id, 'К сожалению, кружков на Профсоюзной не добавлено!',
+            reply_markup=buttons_to_main_or_help
+        )
 
 
 def lomonosovsky_handler(call, bot, admin, db):
-    process_street(call, bot, admin, db, "lomonosovsky")
+    buttons = process_street(admin, db, "lomonosovsky")
+    if buttons:
+        bot.send_message(call.message.chat.id, 'Кружки на Ломоносовском:', reply_markup=buttons)
+    else:
+        buttons_to_main_or_help = types.InlineKeyboardMarkup(row_width=2)
+        buttons_to_main_or_help.row(
+            types.InlineKeyboardButton('Главная', callback_data='restart'),
+            types.InlineKeyboardButton('Помощь', callback_data='help')
+        )
+        bot.send_message(
+            call.message.chat.id, 'К сожалению, кружков на Ломоносовском не добавлено!',
+            reply_markup=buttons_to_main_or_help
+        )
 
 
 def krzhizhanovskogo_handler(call, bot, admin, db):
-    process_street(call, bot, admin, db, "krzhizhanovskogo")
+    buttons = process_street(admin, db, "krzhizhanovskogo")
+    if buttons:
+        bot.send_message(call.message.chat.id, 'Кружки на Крижановского:', reply_markup=buttons)
+    else:
+        buttons_to_main_or_help = types.InlineKeyboardMarkup(row_width=2)
+        buttons_to_main_or_help.row(
+            types.InlineKeyboardButton('Главная', callback_data='restart'),
+            types.InlineKeyboardButton('Помощь', callback_data='help')
+        )
+        bot.send_message(
+            call.message.chat.id, 'К сожалению, кружков на Крижановского не добавлено!',
+            reply_markup=buttons_to_main_or_help
+        )
 
 
 def edit_handler(call, bot, db, connection):
@@ -700,15 +525,15 @@ def edit_handler(call, bot, db, connection):
             )
         else:
             if (
-                " ".join(
-                    [
-                        el[0]
-                        for el in db.execute(
+                    " ".join(
+                        [
+                            el[0]
+                            for el in db.execute(
                             "SELECT sinse FROM dop_ed WHERE id=?", (time_help[2],)
                         )
-                    ]
-                )
-                == "-"
+                        ]
+                    )
+                    == "-"
             ):
                 bot.send_message(
                     call.message.chat.id,
@@ -967,8 +792,9 @@ def create_data_handler(call, bot, db, connection):
         new_id = max(numbers) + 1  # id, name, klasses, type, code, teacher, time, aud, plat, reg, sinse, korp
     db.execute("""INSERT INTO dop_ed (id, name, klasses, type, code, teacher, time, aud, plat, reg,
                     sinse, korp) VALUES (?, '❗Новая запись', '0', '*', '*', '*', '*:*-*:* *', '*', '-', '-', '-', ?)""",
-              [int(new_id) + 10000, call.data.split(", ")[1]])
+               [int(new_id) + 10000, call.data.split(", ")[1]])
     btn = types.InlineKeyboardMarkup().add(
-        types.InlineKeyboardButton('К кружку', callback_data=f'{new_id + 10000} position_details')) # Change call.data!!!
+        types.InlineKeyboardButton('К кружку',
+                                   callback_data=f'{new_id + 10000} position_details'))  # Change call.data!!!
     bot.send_message(call.message.chat.id, 'Запись успешно создана!', reply_markup=btn)
     connection.commit()
