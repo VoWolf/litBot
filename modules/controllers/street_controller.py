@@ -10,16 +10,6 @@ def process_street(admin, db, street_name):
         street_str = "на Крижановского"
 
     bttns = types.InlineKeyboardMarkup()
-    if admin:
-        bttns.row(
-            types.InlineKeyboardButton(
-                "Добавить запись", callback_data=f"add, {street_str}"
-            )
-        )
-    bttns.row(
-        types.InlineKeyboardButton("Главная", callback_data="restart"),
-        types.InlineKeyboardButton("Помощь", callback_data="help"),
-    )
 
     positions = [el for el in db.execute(
         "SELECT * FROM dop_ed WHERE korp = ?", [street_str]
@@ -41,6 +31,19 @@ def process_street(admin, db, street_name):
                         callback_data=f"{position[0]} position_details",
                     )
                 )
+
+    if admin:
+        bttns.row(
+            types.InlineKeyboardButton(
+                "Добавить запись", callback_data=f"add, {street_str}"
+            )
+        )
+    bttns.row(
+        types.InlineKeyboardButton("Главная", callback_data="restart"),
+        types.InlineKeyboardButton("Помощь", callback_data="help"),
+    )
+
+    if not positions == []:
         return bttns
     else:
         return False
