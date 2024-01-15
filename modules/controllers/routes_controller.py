@@ -286,7 +286,6 @@ def all_positions_handler(call, bot, admin, db):
         if not buttons:
             buttons = types.InlineKeyboardMarkup(row_width=2)
         buttons.row(
-            types.InlineKeyboardButton("Главная", callback_data="main"),
             types.InlineKeyboardButton("На стр. 2", callback_data="all_positions, page_2")
         )
         if empty:
@@ -296,7 +295,7 @@ def all_positions_handler(call, bot, admin, db):
             )
         else:
             bot.edit_message_text(
-                'Страница 1/3:\n<u><b>Профсоюзная</b></u> // Ломоносовский // Крижановского\nК сожалению кружков на Профсоюзной не добавлено!',
+                'Страница 1/3:\n<u><b>Профсоюзная</b></u> // Ломоносовский // Крижановского\nК сожалению кружков на Профсоюзной пока-что не добавлено! Для актуальной информации обратитесь к разделу "наша учеба" на сайте www.lit.msu.ru',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
 
@@ -315,7 +314,7 @@ def all_positions_handler(call, bot, admin, db):
             )
         else:
             bot.edit_message_text(
-                'Страница 2/3:\nПрофсоюзная // <u><b>Ломоносовский</b></u> // Крижановского\nК сожалению кружков на Ломоносовском не добавлено!',
+                'Страница 2/3:\nПрофсоюзная // <u><b>Ломоносовский</b></u> // Крижановского\nК сожалению кружков на Ломоносовском пока-что не добавлено! Для актуальной информации обратитесь к разделу "наша учеба" на сайте www.lit.msu.ru',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
 
@@ -325,7 +324,6 @@ def all_positions_handler(call, bot, admin, db):
             buttons = types.InlineKeyboardMarkup(row_width=2)
         buttons.row(
             types.InlineKeyboardButton("На стр. 2", callback_data="all_positions, page_2"),
-            types.InlineKeyboardButton("Главная", callback_data="main")
         )
         if empty:
             bot.edit_message_text(
@@ -334,7 +332,7 @@ def all_positions_handler(call, bot, admin, db):
             )
         else:
             bot.edit_message_text(
-                'Страница 3/3:\nПрофсоюзная // Ломоносовский // <u><b>Крижановского</b></u>\nК сожалению кружков на Крижановского не добавлено!',
+                'Страница 3/3:\nПрофсоюзная // Ломоносовский // <u><b>Крижановского</b></u>\nК сожалению кружков на Крижановского пока-что не добавлено! Для актуальной информации обратитесь к разделу "наша учеба" на сайте www.lit.msu.ru',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
 
