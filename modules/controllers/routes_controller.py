@@ -3,6 +3,9 @@ from modules.utils.db_utils import change_data
 from modules.controllers.street_controller import process_street
 
 
+page_message_data = 0
+
+
 def restart_handler(call, bot):
     """Handles restart route"""
     bttns = types.InlineKeyboardMarkup(row_width=1)
@@ -272,10 +275,67 @@ def position_details_handler(call, bot, admin, db):
 
 
 def all_positions_handler(call, bot, admin, db):
-    page_message_data = 0
+    global page_message_data
+
+    if "remember" in call.data:
+        page_message_data = call.message.id
 
     if "page_1" in call.data:
-        pass
+        buttons = process_street(admin, db, "profsoyuznaya")
+        if not buttons:
+            buttons = types.InlineKeyboardMarkup(row_width=2)
+        buttons.row(
+            types.InlineKeyboardButton("Главная", callback_data="main"),
+            types.InlineKeyboardButton("На стр. 2", callback_data="all_positions, page_2")
+        )
+        if buttons:
+            bot.edit_message_text(
+                'Страница 1/3:\n<b>Профсоюзная</b> Ломоносовский Крижановского\nВсе кружки на профсоюзной:',
+                call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
+            )
+        else:
+            bot.edit_message_text(
+                'Страница 1/3:\n<b>Профсоюзная</b> Ломоносовский Крижановского\nК сожалению кружков на Профсоюзной не добавлено!',
+                call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
+            )
+
+    elif "page_2" in call.data:
+        buttons = process_street(admin, db, "lomonosovsky")
+        if not buttons:
+            buttons = types.InlineKeyboardMarkup(row_width=2)
+        buttons.row(
+            types.InlineKeyboardButton("На стр. 1", callback_data="all_positions, page_1"),
+            types.InlineKeyboardButton("На стр. 3", callback_data="all_positions, page_3")
+        )
+        if buttons:
+            bot.edit_message_text(
+                'Страница 2/3:\nПрофсоюзная <b>Ломоносовский</b> Крижановского\nВсе кружки на Ломоносовском:',
+                call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
+            )
+        else:
+            bot.edit_message_text(
+                'Страница 2/3:\nПрофсоюзная <b>Ломоносовский</b> Крижановского\nК сожалению кружков на Ломоносовском не добавлено!',
+                call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
+            )
+
+    elif "page_3" in call.data:
+        buttons = process_street(admin, db, "krzhizhanovskogo")
+        if not buttons:
+            buttons = types.InlineKeyboardMarkup(row_width=2)
+        buttons.row(
+            types.InlineKeyboardButton("На стр. 2", callback_data="all_positions, page_2"),
+            types.InlineKeyboardButton("Главная", callback_data="main")
+        )
+        if buttons:
+            bot.edit_message_text(
+                'Страница 3/3:\nПрофсоюзная Ломоносовский <b>Крижановского</b>\nВсе кружки на Крижановского:',
+                call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
+            )
+        else:
+            bot.edit_message_text(
+                'Страница 3/3:\nПрофсоюзная Ломоносовский <b>Крижановского</b>\nК сожалению кружков на Крижановского не добавлено!',
+                call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
+            )
 
 
 def profsoyuznaya_handler(call, bot, admin, db):
