@@ -281,59 +281,60 @@ def all_positions_handler(call, bot, admin, db):
         page_message_data = call.message.id
 
     if "page_1" in call.data:
-        buttons = process_street(admin, db, "profsoyuznaya")
+        # empty shows True if buttons exist and False if not
+        buttons = empty = process_street(admin, db, "profsoyuznaya")
         if not buttons:
             buttons = types.InlineKeyboardMarkup(row_width=2)
         buttons.row(
             types.InlineKeyboardButton("Главная", callback_data="main"),
             types.InlineKeyboardButton("На стр. 2", callback_data="all_positions, page_2")
         )
-        if buttons:
+        if empty:
             bot.edit_message_text(
-                'Страница 1/3:\n<b>Профсоюзная</b> Ломоносовский Крижановского\nВсе кружки на профсоюзной:',
+                'Страница 1/3:\n<u><b>Профсоюзная</b></u> // Ломоносовский // Крижановского\nВсе кружки на Профсоюзной:',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
         else:
             bot.edit_message_text(
-                'Страница 1/3:\n<b>Профсоюзная</b> Ломоносовский Крижановского\nК сожалению кружков на Профсоюзной не добавлено!',
+                'Страница 1/3:\n<u><b>Профсоюзная</b></u> // Ломоносовский // Крижановского\nК сожалению кружков на Профсоюзной не добавлено!',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
 
     elif "page_2" in call.data:
-        buttons = process_street(admin, db, "lomonosovsky")
+        buttons = empty = process_street(admin, db, "lomonosovsky")
         if not buttons:
             buttons = types.InlineKeyboardMarkup(row_width=2)
         buttons.row(
             types.InlineKeyboardButton("На стр. 1", callback_data="all_positions, page_1"),
             types.InlineKeyboardButton("На стр. 3", callback_data="all_positions, page_3")
         )
-        if buttons:
+        if empty:
             bot.edit_message_text(
-                'Страница 2/3:\nПрофсоюзная <b>Ломоносовский</b> Крижановского\nВсе кружки на Ломоносовском:',
+                'Страница 2/3:\nПрофсоюзная // <u><b>Ломоносовский</b></u> // Крижановского\nВсе кружки на Ломоносовском:',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
         else:
             bot.edit_message_text(
-                'Страница 2/3:\nПрофсоюзная <b>Ломоносовский</b> Крижановского\nК сожалению кружков на Ломоносовском не добавлено!',
+                'Страница 2/3:\nПрофсоюзная // <u><b>Ломоносовский</b></u> // Крижановского\nК сожалению кружков на Ломоносовском не добавлено!',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
 
     elif "page_3" in call.data:
-        buttons = process_street(admin, db, "krzhizhanovskogo")
+        buttons = empty = process_street(admin, db, "krzhizhanovskogo")
         if not buttons:
             buttons = types.InlineKeyboardMarkup(row_width=2)
         buttons.row(
             types.InlineKeyboardButton("На стр. 2", callback_data="all_positions, page_2"),
             types.InlineKeyboardButton("Главная", callback_data="main")
         )
-        if buttons:
+        if empty:
             bot.edit_message_text(
-                'Страница 3/3:\nПрофсоюзная Ломоносовский <b>Крижановского</b>\nВсе кружки на Крижановского:',
+                'Страница 3/3:\nПрофсоюзная // Ломоносовский // <u><b>Крижановского</b></u>\nВсе кружки на Крижановского:',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
         else:
             bot.edit_message_text(
-                'Страница 3/3:\nПрофсоюзная Ломоносовский <b>Крижановского</b>\nК сожалению кружков на Крижановского не добавлено!',
+                'Страница 3/3:\nПрофсоюзная // Ломоносовский // <u><b>Крижановского</b></u>\nК сожалению кружков на Крижановского не добавлено!',
                 call.message.chat.id, page_message_data, parse_mode='HTML', reply_markup=buttons
             )
 

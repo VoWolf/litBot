@@ -2,5 +2,5 @@
 Telegram bot for LIT
 
 * Convenient way to learn more about LIT
-* All benefits from other versions
-* You can send your suggests to my email (volchenkov.timofei@lit1533.ru)
+* <b>All benefits</b> from other versions
+* All information for this bot is taken from https://www.lit.msu.ru
