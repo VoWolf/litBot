@@ -1,5 +1,8 @@
 import modules.services.bot_service as bot_service
 from modules.instances.bot_instance import bot
+from db.database import *
+
+create_tables()
 
 
 @bot.message_handler(commands=["admin", "login", "reg"])

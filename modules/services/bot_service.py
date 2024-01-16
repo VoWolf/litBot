@@ -6,7 +6,7 @@ from modules.instances.bot_instance import bot
 
 
 admin = False
-ADMIN_PASSWORD = "7273131925"
+ADMIN_PASSWORD = "1"
 
 
 def check_user(message):
