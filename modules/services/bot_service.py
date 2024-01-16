@@ -44,18 +44,17 @@ def check_password(message):
 
 def start(message):
     """Starts bot"""
-    buttons = types.InlineKeyboardMarkup(row_width=1)
+    bttns = types.InlineKeyboardMarkup(row_width=1)
     btn1 = types.InlineKeyboardButton(
         "Дополнительное образование", callback_data="dop_education"
     )
     btn2 = types.InlineKeyboardButton("Контактные данные", callback_data="contacts")
-    btn3 = types.InlineKeyboardButton("Помощь", callback_data="help")
-    buttons.add(btn1, btn2, btn3)
+    bttns.add(btn1, btn2)
     bot.send_message(
         message.chat.id,
-        "Здравствуйте! Я бот Лицея №1533 и могу ответить на ваши вопросы. Вот разделы которые в меня "
-        "загружены:",
-        reply_markup=buttons,
+        "Здравствуйте! Я бот Лицея №1533 и могу ответить на ваши вопросы. Ниже представлены разделы, которые в меня "
+        "загружены. Если вам нужна помощь воспользуйтесь командой /help.",
+        reply_markup=bttns,
     )
 
 
@@ -63,16 +62,18 @@ def show_help(message):
     """Handles show help command"""
     markup = types.InlineKeyboardMarkup(row_width=1)
     item = types.InlineKeyboardButton("Контактные данные", callback_data="contacts")
-    item2 = types.InlineKeyboardButton("Главное меню", callback_data="restart")
+    item2 = types.InlineKeyboardButton("Главное меню", callback_data="main")
+    markup.row(item, item2)
     item3 = types.InlineKeyboardButton(
         "Как записаться на доп. образование", callback_data="how_to_register"
     )
-    markup.add(item, item2, item3)
+    markup.row(item3)
     bot.send_message(
         message.chat.id,
         "Данный бот предназначен для предоставления информации о дополнительном образовании. Если вы не нашли здесь "
-        "нужной вам информации, обратитесь к администрации лицея (контактные данные откроются при нажатии на кнопку "
-        "ниже) \n \n Воспользуйтесь командой /start или кнопкой под сообщением для возвпащения к главным опциям.",
+        "нужных вам данных, обратитесь к администрации лицея (контактные данные откроются при нажатии на кнопку "
+        "ниже) или воспользуйтесь разделом 'Наша учеба' на сайте www.lit.msu.ru.\n\nВоспользуйтесь командой "
+        "/main или кнопкой под сообщением для возвпащения к главным опциям.",
         reply_markup=markup,
     )
 
@@ -84,30 +85,28 @@ def callback_handler(call):
     db = conn.cursor()
 
     match command:
-        case "restart":
-            routes_controller.restart_handler(call, bot)
-        case "holidays":
-            routes_controller.holidays_handler(call, bot)
+        case "main":
+            routes_controller.main_handler(call, bot)
+        # case "holidays":
+        #     routes_controller.holidays_handler(call, bot)
         case "contacts":
             routes_controller.contacts_handler(call, bot)
         case "admin":
             routes_controller.admin_page_handler(call, bot)
-        case "phones":
-            routes_controller.phones_handler(call, bot)
-        case "help":
-            routes_controller.help_handler(call, bot)
+        # case "phones":
+        #     routes_controller.phones_handler(call, bot)
         case "how_to_register":
             routes_controller.how_to_register_handler(call, bot)
         case "dop_education":
             routes_controller.dop_education_handler(call, bot)
-        case "all_positions":
-            routes_controller.all_positions_handler(call, bot, admin, db)
-        case "profsoyuznaya":
-            routes_controller.profsoyuznaya_handler(call, bot, admin, db)
+        # case "profsoyuznaya":
+        #     routes_controller.profsoyuznaya_handler(call, bot, admin, db)
         case "lomonosovsky":
             routes_controller.lomonosovsky_handler(call, bot, admin, db)
         case "krzhizhanovskogo":
             routes_controller.krzhizhanovskogo_handler(call, bot, admin, db)
+        case "profsoyuznaya":
+            routes_controller.profsoyuznaya_handler(call, bot, admin, db)
         case "change_password":
             # not implemented
             routes_controller.change_password_handler(call, bot)
@@ -124,7 +123,7 @@ def callback_handler(call):
         case _ as teststring if "all_positions" in teststring:
             routes_controller.all_positions_handler(call, bot, admin, db)
         case _:
-            routes_controller.restart_handler(call, bot)
+            routes_controller.main_handler(call, bot)
 
     db.close()
     conn.close()
