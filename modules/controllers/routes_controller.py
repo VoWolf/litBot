@@ -16,8 +16,8 @@ def main_handler(call, bot):
     bttns.add(btn1, btn2)
     bot.send_message(
         call.message.chat.id,
-        "Здравствуйте! Я бот Лицея №1533 и могу ответить на ваши вопросы. Ниже представлены разделы, которые в меня загружены. "
-        "Если вам нужна помощь воспользуйтесь командой /help.",
+        "Здравствуйте! Я бот Лицея №1533 и могу ответить на ваши вопросы. Ниже представлены разделы, которые в меня "
+        "загружены. Если вам нужна помощь воспользуйтесь командой /help.",
         reply_markup=bttns,
     )
 
@@ -346,6 +346,21 @@ def krzhizhanovskogo_handler(call, bot, admin, db):
             call.message.chat.id, 'К сожалению, кружков на Крижановского не добавлено!',
             reply_markup=buttons_to_main
         )
+
+
+def holidays_handler(bot, call):
+    buttons = types.InlineKeyboardMarkup()
+    buttons.row(
+        types.InlineKeyboardButton(
+            "Главная", callback_data="main"
+        ),
+        types.InlineKeyboardButton(
+            "Назад", callback_data="contacts"
+        )
+    )
+    file = open("./holidays_2023-2024.png", "rb")
+    bot.send_photo(call.message.chat.id, file, 'Расписание каникул на 2023 - 2024 год!', reply_markup=buttons)
+    file.close()
 
 
 def edit_handler(call, bot, db, connection):

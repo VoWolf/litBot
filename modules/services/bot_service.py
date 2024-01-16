@@ -114,6 +114,8 @@ def callback_handler(call):
         case "logout":
             # not implemented
             routes_controller.logout_handler(call, bot)
+        case "holidays":
+            routes_controller.holidays_handler(bot, call)
         case _ as par if "edit" in par:
             routes_controller.edit_handler(call, bot, db, conn)
         case _ as detail if "position_details" in detail:
