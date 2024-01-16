@@ -1,7 +1,7 @@
 from telebot import types
 
 
-def process_street(call, bot, admin, db, street_name):
+def process_street(admin, db, street_name):
     if street_name == "profsoyuznaya":
         street_str = "на Профсоюзной"
     elif street_name == "lomonosovsky":
@@ -9,15 +9,29 @@ def process_street(call, bot, admin, db, street_name):
     else:
         street_str = "на Крижановского"
 
+    bttns = types.InlineKeyboardMarkup()
+
     positions = [el for el in db.execute(
         "SELECT * FROM dop_ed WHERE korp = ?", [street_str]
     ).fetchall() if el[0] < 10000 or admin]
 
-    # positions = db.execute(
-    #     "SELECT * FROM dop_ed WHERE korp = ?", [street_str]
-    # ).fetchall()
+    if not positions == []:
+        for position in positions:
+            if len(str(position[2]).split()) > 1:
+                bttns.add(
+                    types.InlineKeyboardButton(
+                        f'{position[1]} для {", ".join(str(position[2]).split()[0:-1])} и {str(position[2]).split()[-1]} классов',
+                        callback_data=f"{position[0]} position_details",
+                    )
+                )
+            else:
+                bttns.add(
+                    types.InlineKeyboardButton(
+                        f"{position[1]} для {str(position[2]).split()[-1]} классов",
+                        callback_data=f"{position[0]} position_details",
+                    )
+                )
 
-    bttns = types.InlineKeyboardMarkup()
     if admin:
         bttns.row(
             types.InlineKeyboardButton(
@@ -25,31 +39,10 @@ def process_street(call, bot, admin, db, street_name):
             )
         )
     bttns.row(
-        types.InlineKeyboardButton("Главная", callback_data="restart"),
-        types.InlineKeyboardButton("Помощь", callback_data="help"),
+        types.InlineKeyboardButton("Главная", callback_data="main"),
     )
-    if positions == []:
-        bot.send_message(
-            call.message.chat.id,
-            f"К сожалению, кружков {street_str} не добавлено!",
-            reply_markup=bttns,
-        )
+
+    if not positions == []:
+        return bttns
     else:
-        for el in positions:
-            if len(str(el[2]).split()) > 1:
-                bttns.add(
-                    types.InlineKeyboardButton(
-                        f'{el[1]} для {", ".join(str(el[2]).split()[0:-1])} и {str(el[2]).split()[-1]} классов',
-                        callback_data=f"{el[0]} position_details",
-                    )
-                )
-            else:
-                bttns.add(
-                    types.InlineKeyboardButton(
-                        f"{el[1]} для {str(el[2]).split()[-1]} классов",
-                        callback_data=f"{el[0]} position_details",
-                    )
-                )
-        bot.send_message(
-            call.message.chat.id, f"Кружки {street_str}:", reply_markup=bttns
-        )
+        return False
