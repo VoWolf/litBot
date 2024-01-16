@@ -6,36 +6,20 @@ from modules.controllers.street_controller import process_street
 page_message_data = 0
 
 
-def restart_handler(call, bot):
-    """Handles restart route"""
+def main_handler(call, bot):
+    """Handles main route"""
     bttns = types.InlineKeyboardMarkup(row_width=1)
     btn1 = types.InlineKeyboardButton(
         "Дополнительное образование", callback_data="dop_education"
     )
     btn2 = types.InlineKeyboardButton("Контактные данные", callback_data="contacts")
-    btn3 = types.InlineKeyboardButton("Помощь", callback_data="help")
-    bttns.add(btn1, btn2, btn3)
+    bttns.add(btn1, btn2)
     bot.send_message(
         call.message.chat.id,
-        "Здравствуйте! Я бот Лицея №1533 и могу ответить на ваши вопросы. Вот разделы, которые в меня загружены:",
+        "Здравствуйте! Я бот Лицея №1533 и могу ответить на ваши вопросы. Ниже представлены разделы, которые в меня загружены. "
+        "Если вам нужна помощь воспользуйтесь командой /help.",
         reply_markup=bttns,
     )
-
-
-def holidays_handler(call, bot):
-    """Handles holidays route"""
-    f = open("holidays_2023-2024.png", "rb")
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    btn1 = types.InlineKeyboardButton("Главная страница", callback_data="restart")
-    btn2 = types.InlineKeyboardButton("К номерам телефона", callback_data="phones")
-    markup.add(btn1, btn2)
-    bot.send_photo(
-        call.message.chat.id,
-        f,
-        "Расписание каникул 2023-2024!",
-        reply_markup=markup,
-    )
-    f.close()
 
 
 def contacts_handler(call, bot):
@@ -47,17 +31,19 @@ def contacts_handler(call, bot):
             "%3A1nzJdcg6iOPjfPFPXyh90u3R46dsk_8W&z=15",
     )
     item2 = types.InlineKeyboardButton(
-        "Номера телефонов и официальный сайт", callback_data="phones"
+        "Официальный сайт", url="https://lyc1533.mskobr.ru/"
     )
-    item3 = types.InlineKeyboardButton("Главная страница", callback_data="restart")
-    item4 = types.InlineKeyboardButton(
-        "Как записаться на доп образование?", callback_data="how_to_register"
+    item3 = types.InlineKeyboardButton(
+        "Содружество лицея", url="https://www.lit.msu.ru/"
     )
-
-    markup.add(item, item2, item3, item4)
+    markup.row(item2, item3)
+    item4 = types.InlineKeyboardButton("Главная", callback_data="main")
+    item5 = types.InlineKeyboardButton("Каникулы", callback_data="holidays")
+    markup.row(item4, item5)
     bot.send_message(
         call.message.chat.id,
-        "Информация об администрации Лицея №1533:",
+        "Звоните с 9 до 18 часов в учебное время, а также с 10 до 16 во время каникул: \n +7 499 133-24-35 ... "
+        "Ломоносовский, \n +7 499 124-55-65 ... Профсоюзная, \n +7 499 125-23-59 ... Кржижановского",
         reply_markup=markup,
     )
 
@@ -81,39 +67,6 @@ def admin_page_handler(call, bot):
     )
 
 
-def phones_handler(call, bot):
-    """Handler for phones"""
-    markup = types.InlineKeyboardMarkup(row_width=1)  # сколько кнопок в ряд
-    item = types.InlineKeyboardButton(
-        "Официальный сайт школы № 1533 «ЛИТ»", url="https://lyc1533.mskobr.ru/"
-    )
-    item2 = types.InlineKeyboardButton("Расписание каникул", callback_data="holidays")
-    item3 = types.InlineKeyboardButton("Главная страница", callback_data="restart")
-    markup.add(item, item2, item3)
-    bot.send_message(
-        call.message.chat.id,
-        "Звоните с 9 до 18 часов в учебное время, а также с 10 до 16 во время каникул: \n +7 499 133-24-35 ... "
-        "Ломоносовский, \n +7 499 124-55-65 ... Профсоюзная, \n +7 499 125-23-59 ... Кржижановского",
-        reply_markup=markup,
-    )
-
-
-def help_handler(call, bot):
-    """Help handler"""
-    markup = types.InlineKeyboardMarkup(row_width=1)
-    item = types.InlineKeyboardButton("Контактные данные", callback_data="contacts")
-    item2 = types.InlineKeyboardButton("Главная страница", callback_data="restart")
-    item3 = types.InlineKeyboardButton(
-        "Как записаться на доп. образование", callback_data="how_to_register"
-    )
-    markup.add(item, item2, item3)
-    bot.send_message(
-        call.message.chat.id,
-        "Данный бот предназначен для предоставления информации о дополнительном образовании. Если вы не нашли здесь нужной вам информации, обратитесь к администрации лицея (контактные данные откроются при нажатии на кнопку ниже) \n\n Воспользуйтесь командой /start или кнопкой под сообщением для возвращения в главное меню.",
-        reply_markup=markup,
-    )
-
-
 def how_to_register_handler(call, bot):
     """Handler for registration"""
     bttns = types.InlineKeyboardMarkup()
@@ -122,7 +75,14 @@ def how_to_register_handler(call, bot):
     bttns.add(btn, btn2)
     bot.send_message(
         call.message.chat.id,
-        'Это делается через сайт mos.ru. Вот подробная инструкция по записи:\n1. Зайдите на сайт mos.ru и войдите в аккаунт\n2. Сверху перечислены разделы, перейдите в раздел "услуги"\n3. В меню слева выбираете услугу "образование". Если ее не видно, воспользуйтесь строкой для поиска\n4. Когда вы выберете услугу "образование", чуть правее появится выбор раздела. Выберите "допобразование"\n5. Еще правее выберите пункт "Запись в кружки, спортивные секции, дома творчества", нажмите на него\n6. Подтвердите свой выбор, нажав на кнопку "Получить услугу"\n7. В открывшемся окне выберите пункт "Запись в кружок", ниже введите код кружка (его можно получить в этом боте)\n8. Далее следуйте инструкциям на сайте, удачи! ВАЖНО! Для записи к Вашему аккаунту на mos.ru должен быть привязан СНИЛС ',
+        'Это делается через сайт mos.ru. Вот подробная инструкция по записи:\n1. Зайдите на сайт mos.ru и войдите '
+        'в аккаунт\n2. Сверху перечислены разделы, перейдите в раздел "услуги"\n3. В меню слева выбираете услугу '
+        '"образование". Если ее не видно, воспользуйтесь строкой для поиска\n4. Когда вы выберете услугу "образование",'
+        ' чуть правее появится выбор раздела. Выберите "допобразование"\n5. Еще правее выберите пункт "Запись в кружки,'
+        ' спортивные секции, дома творчества", нажмите на него\n6. Подтвердите свой выбор, нажав на кнопку "Получить '
+        'услугу"\n7. В открывшемся окне выберите пункт "Запись в кружок", ниже введите код кружка (его можно получить в'
+        ' этом боте)\n8. Далее следуйте инструкциям на сайте, удачи! ВАЖНО! Для записи к Вашему аккаунту на mos.ru '
+        'должен быть привязан СНИЛС ',
         reply_markup=bttns,
     )
 
@@ -131,28 +91,34 @@ def dop_education_handler(call, bot):
     """Additional education handler"""
     bttns = types.InlineKeyboardMarkup()
     bttns.row(
-        types.InlineKeyboardButton("На Профсоюзной", callback_data="profsoyuznaya")
+        types.InlineKeyboardButton(
+            "На Профсоюзной", callback_data="profsoyuznaya"
+        ),
+        types.InlineKeyboardButton(
+            "На Ломоносовском", callback_data="lomonosovsky"
+        )
     )
     bttns.row(
-        types.InlineKeyboardButton("На Ломоносовском", callback_data="lomonosovsky")
-    )
-    bttns.row(
-        types.InlineKeyboardButton("На Крижановского", callback_data="krzhizhanovskogo")
-    )
-    bttns.row(
+        types.InlineKeyboardButton(
+            "На Крижановского", callback_data="krzhizhanovskogo"
+        ),
         types.InlineKeyboardButton(
             "Все наши кружки", callback_data="all_positions, page_1, remember"
         )
     )
     bttns.row(
-        types.InlineKeyboardButton("Главная", callback_data="restart"),
-        types.InlineKeyboardButton("Помощь", callback_data="help"),
+        types.InlineKeyboardButton(
+            "Главная", callback_data="main"
+        )
     )
 
     bot.send_message(
-        call.message.chat.id,
-        "Кружки в каком корпусе вас интересуют?",
-        reply_markup=bttns,
+        call.message.chat.id, "Кружки в каком корпусе вас интересуют?", reply_markup=bttns
+    )
+    bttns.row(
+        types.InlineKeyboardButton(
+            "Главная", callback_data="main"
+        )
     )
 
 
@@ -161,7 +127,7 @@ def position_details_handler(call, bot, admin, db):
     btn0 = types.InlineKeyboardButton(
         "К кружкам", callback_data="all_positions, page_1, remember"
     )
-    btn1 = types.InlineKeyboardButton("Главная", callback_data="restart")
+    btn1 = types.InlineKeyboardButton("Главная", callback_data="main")
     bttns.row(btn0, btn1)
     result = db.execute(
         """SELECT * FROM dop_ed WHERE id = ?""", (call.data.split()[0],)
@@ -342,14 +308,13 @@ def profsoyuznaya_handler(call, bot, admin, db):
     if buttons:
         bot.send_message(call.message.chat.id, 'Кружки на Профсоюзной:', reply_markup=buttons)
     else:
-        buttons_to_main_or_help = types.InlineKeyboardMarkup(row_width=2)
-        buttons_to_main_or_help.row(
-            types.InlineKeyboardButton('Главная', callback_data='restart'),
-            types.InlineKeyboardButton('Помощь', callback_data='help')
+        buttons_to_main = types.InlineKeyboardMarkup(row_width=2)
+        buttons_to_main.row(
+            types.InlineKeyboardButton('Главная', callback_data='main'),
         )
         bot.send_message(
             call.message.chat.id, 'К сожалению, кружков на Профсоюзной не добавлено!',
-            reply_markup=buttons_to_main_or_help
+            reply_markup=buttons_to_main
         )
 
 
@@ -358,14 +323,13 @@ def lomonosovsky_handler(call, bot, admin, db):
     if buttons:
         bot.send_message(call.message.chat.id, 'Кружки на Ломоносовском:', reply_markup=buttons)
     else:
-        buttons_to_main_or_help = types.InlineKeyboardMarkup(row_width=2)
-        buttons_to_main_or_help.row(
-            types.InlineKeyboardButton('Главная', callback_data='restart'),
-            types.InlineKeyboardButton('Помощь', callback_data='help')
+        buttons_to_main = types.InlineKeyboardMarkup(row_width=2)
+        buttons_to_main.row(
+            types.InlineKeyboardButton('Главная', callback_data='main'),
         )
         bot.send_message(
             call.message.chat.id, 'К сожалению, кружков на Ломоносовском не добавлено!',
-            reply_markup=buttons_to_main_or_help
+            reply_markup=buttons_to_main
         )
 
 
@@ -374,14 +338,13 @@ def krzhizhanovskogo_handler(call, bot, admin, db):
     if buttons:
         bot.send_message(call.message.chat.id, 'Кружки на Крижановского:', reply_markup=buttons)
     else:
-        buttons_to_main_or_help = types.InlineKeyboardMarkup(row_width=2)
-        buttons_to_main_or_help.row(
-            types.InlineKeyboardButton('Главная', callback_data='restart'),
-            types.InlineKeyboardButton('Помощь', callback_data='help')
+        buttons_to_main = types.InlineKeyboardMarkup(row_width=2)
+        buttons_to_main.row(
+            types.InlineKeyboardButton('Главная', callback_data='main'),
         )
         bot.send_message(
             call.message.chat.id, 'К сожалению, кружков на Крижановского не добавлено!',
-            reply_markup=buttons_to_main_or_help
+            reply_markup=buttons_to_main
         )
 
 

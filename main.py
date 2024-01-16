@@ -7,7 +7,7 @@ def check_user(message):
     bot_service.check_user(message)
 
 
-@bot.message_handler(commands=["start"])
+@bot.message_handler(commands=["start", "main"])
 def start(message):
     bot_service.start(message)
 

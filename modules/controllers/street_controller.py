@@ -39,8 +39,7 @@ def process_street(admin, db, street_name):
             )
         )
     bttns.row(
-        types.InlineKeyboardButton("Главная", callback_data="restart"),
-        types.InlineKeyboardButton("Помощь", callback_data="help"),
+        types.InlineKeyboardButton("Главная", callback_data="main"),
     )
 
     if not positions == []:
