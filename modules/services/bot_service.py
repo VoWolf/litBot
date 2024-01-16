@@ -105,6 +105,8 @@ def callback_handler(call):
             routes_controller.lomonosovsky_handler(call, bot, admin, db)
         case "krzhizhanovskogo":
             routes_controller.krzhizhanovskogo_handler(call, bot, admin, db)
+        case "profsoyuznaya":
+            routes_controller.profsoyuznaya_handler(call, bot, admin, db)
         case "change_password":
             # not implemented
             routes_controller.change_password_handler(call, bot)
@@ -112,8 +114,6 @@ def callback_handler(call):
         case "logout":
             # not implemented
             routes_controller.logout_handler(call, bot)
-        case _ as page if "profsoyuznaya_handler" in page:
-            routes_controller.profsoyuznaya_handler(call, bot, admin, db)
         case _ as par if "edit" in par:
             routes_controller.edit_handler(call, bot, db, conn)
         case _ as detail if "position_details" in detail:
