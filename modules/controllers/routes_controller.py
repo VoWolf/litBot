@@ -1,6 +1,10 @@
 from telebot import types
 from modules.utils.db_utils import change_data
 from modules.controllers.street_controller import process_street
+from modules.controllers.page_controller import PageSwitcher
+
+
+page = None
 
 
 page_message_data = 0
@@ -92,15 +96,15 @@ def dop_education_handler(call, bot):
     bttns = types.InlineKeyboardMarkup()
     bttns.row(
         types.InlineKeyboardButton(
-            "На Профсоюзной", callback_data="profsoyuznaya"
+            "На Профсоюзной", callback_data="Look_at_education_in, remember, profsoyuznaya"
         ),
         types.InlineKeyboardButton(
-            "На Ломоносовском", callback_data="lomonosovsky"
+            "На Ломоносовском", callback_data="Look_at_education_in, remember, lomonosovsky"
         )
     )
     bttns.row(
         types.InlineKeyboardButton(
-            "На Крижановского", callback_data="krzhizhanovskogo"
+            "На Крижановского", callback_data="Look_at_education_in, remember, krzhizhanovskogo"
         ),
         types.InlineKeyboardButton(
             "Все наши кружки", callback_data="all_positions, page_1, remember"
@@ -303,49 +307,28 @@ def all_positions_handler(call, bot, admin, db):
             )
 
 
-def profsoyuznaya_handler(call, bot, admin, db):
-    buttons = process_street(admin, db, "profsoyuznaya")
-    if buttons:
-        bot.send_message(call.message.chat.id, 'Кружки на Профсоюзной:', reply_markup=buttons)
-    else:
-        buttons_to_main = types.InlineKeyboardMarkup(row_width=2)
-        buttons_to_main.row(
-            types.InlineKeyboardButton('Главная', callback_data='main'),
-        )
-        bot.send_message(
-            call.message.chat.id, 'К сожалению, кружков на Профсоюзной не добавлено!',
-            reply_markup=buttons_to_main
-        )
-
-
-def lomonosovsky_handler(call, bot, admin, db):
-    buttons = process_street(admin, db, "lomonosovsky")
-    if buttons:
-        bot.send_message(call.message.chat.id, 'Кружки на Ломоносовском:', reply_markup=buttons)
-    else:
-        buttons_to_main = types.InlineKeyboardMarkup(row_width=2)
-        buttons_to_main.row(
-            types.InlineKeyboardButton('Главная', callback_data='main'),
-        )
-        bot.send_message(
-            call.message.chat.id, 'К сожалению, кружков на Ломоносовском не добавлено!',
-            reply_markup=buttons_to_main
-        )
-
-
-def krzhizhanovskogo_handler(call, bot, admin, db):
-    buttons = process_street(admin, db, "krzhizhanovskogo")
-    if buttons:
-        bot.send_message(call.message.chat.id, 'Кружки на Крижановского:', reply_markup=buttons)
-    else:
-        buttons_to_main = types.InlineKeyboardMarkup(row_width=2)
-        buttons_to_main.row(
-            types.InlineKeyboardButton('Главная', callback_data='main'),
-        )
-        bot.send_message(
-            call.message.chat.id, 'К сожалению, кружков на Крижановского не добавлено!',
-            reply_markup=buttons_to_main
-        )
+def look_at_education_handler(call, bot, admin, db):
+    """Additional education handler"""
+    global page
+    if call.data.split(", ")[1] == "remember":
+        page = PageSwitcher(street_name=call.data.split()[2], admin=admin, db=db, message_id=call.message.id)
+        buttons, text = page.start_page()
+        if len(page.page_buttons) == 1:
+            bot.edit_message_text(f"К сожалению, кружков на {page.street_russian_name} пока что не добавлено! "
+                                  f"Пожалуйта, обратитесь к разделу 'Наша учеба' на сайте www.lit.msu.ru (Сообществе "
+                                  f"лицея) или свяжитесь с администрацией!", call.message.chat.id, page.message_id,
+                                  reply_markup=types.InlineKeyboardMarkup().add(types.InlineKeyboardButton(
+                                      "Главная", callback_data="main"))
+                                  )
+        else:
+            bot.edit_message_text(text, call.message.chat.id, page.message_id, reply_markup=buttons, parse_mode="HTML")
+    if call.data.split(", ")[1] == "prev_page":
+        buttons, text = page.prev_page()
+        bot.edit_message_text(text, call.message.chat.id, page.message_id, reply_markup=buttons, parse_mode="HTML")
+    elif call.data.split(", ")[1] == "next_page":
+        print(page)
+        buttons, text = page.next_page()
+        bot.edit_message_text(text, call.message.chat.id, page.message_id, reply_markup=buttons, parse_mode="HTML")
 
 
 def holidays_handler(bot, call):
