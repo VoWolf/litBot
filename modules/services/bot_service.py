@@ -87,26 +87,14 @@ def callback_handler(call):
     match command:
         case "main":
             routes_controller.main_handler(call, bot)
-        # case "holidays":
-        #     routes_controller.holidays_handler(call, bot)
         case "contacts":
             routes_controller.contacts_handler(call, bot)
         case "admin":
             routes_controller.admin_page_handler(call, bot)
-        # case "phones":
-        #     routes_controller.phones_handler(call, bot)
         case "how_to_register":
             routes_controller.how_to_register_handler(call, bot)
         case "dop_education":
             routes_controller.dop_education_handler(call, bot)
-        # case "profsoyuznaya":
-        #     routes_controller.profsoyuznaya_handler(call, bot, admin, db)
-        case "lomonosovsky":
-            routes_controller.lomonosovsky_handler(call, bot, admin, db)
-        case "krzhizhanovskogo":
-            routes_controller.krzhizhanovskogo_handler(call, bot, admin, db)
-        case "profsoyuznaya":
-            routes_controller.profsoyuznaya_handler(call, bot, admin, db)
         case "change_password":
             # not implemented
             routes_controller.change_password_handler(call, bot)
@@ -116,6 +104,8 @@ def callback_handler(call):
             routes_controller.logout_handler(call, bot)
         case "holidays":
             routes_controller.holidays_handler(bot, call)
+        case _ as tag if "Look_at_education_in" in tag:
+            routes_controller.look_at_education_handler(call, bot, admin, db)
         case _ as par if "edit" in par:
             routes_controller.edit_handler(call, bot, db, conn)
         case _ as detail if "position_details" in detail:
