@@ -9,7 +9,7 @@ class PageSwitcher:
         elif street_name == "lomonosovsky":
             self.street_russian_name = "Ломоносовском"
         else:
-            self.street_russian_name = "Крижановского"
+            self.street_russian_name = "Кржижановского"
         self.message_id = message_id
         self.page_buttons = process_street(admin, db, street_name)
         self.page = 0
@@ -17,7 +17,7 @@ class PageSwitcher:
         if self.max_page % 5:
             self.max_page += 1
         self.message_text = ["Кружки на ", self.street_russian_name,
-                             ":\n", *[str(i) + ' ' for i in range(1, self.max_page + 2)]]
+                             ":\nСтраница:", *[' ' + str(i) + ' ' for i in range(1, self.max_page + 2)]]
 
     def next_page(self):
         self.page += 1
@@ -60,13 +60,10 @@ def add_navigation_buttons(page, max_page, page_buttons, message_text):
         )
     if page != 0 and len(message_text[page + 2].split()) == 3:
         message_text[page + 2] = message_text[page + 2].split()[1]  # remove <b> format
-        message_text[page + 2] = message_text[page + 2][1:-1] + " "  # remove "()"
-    message_text[page + 3] = f"<b> ({message_text[page + 3][0]}) </b>"
+        message_text[page + 2] = " " + message_text[page + 2][1:-1] + " "  # remove "()"
+    message_text[page + 3] = f"<b> ({message_text[page + 3][1]}) </b>"
     if page != max_page and len(message_text[page + 4].split()) == 3:
-        print(message_text)
-        print(max_page)
-        print(message_text[page + 4].split()[1])
         message_text[page + 4] = message_text[page + 4].split()[1]  # remove <b> format
-        message_text[page + 4] = message_text[page + 4][1:-1] + " "  # remove "()"
+        message_text[page + 4] = " " + message_text[page + 4][1:-1] + " "  # remove "()"
 
     return buttons, message_text

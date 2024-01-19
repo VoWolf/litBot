@@ -7,7 +7,7 @@ def process_street(admin, db, street_name):
     elif street_name == "lomonosovsky":
         street_str = "на Ломоносовском"
     else:
-        street_str = "на Крижановского"
+        street_str = "на Кржижановского"
 
     buttons = []
 
